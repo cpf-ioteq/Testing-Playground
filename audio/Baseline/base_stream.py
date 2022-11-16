@@ -29,7 +29,19 @@ parser.add_argument(
     nargs='?',
     type=float,
     default=500,
-    help='frequency in Hz (DEFAULT: %(default)s)')
+    help='Carrier Frequency in Hz (DEFAULT: %(default)s)')
+parser.add_argument(
+    'k',
+    nargs='?',
+    type=float,
+    default=25,
+    help='Deviation Constant (DEFAULT: %(default)s)')
+parser.add_argument(
+    'm',
+    nargs='?',
+    type=float,
+    default=250,
+    help='Modulator Frequency in Hz (DEFAULT: %(default)s)')
 parser.add_argument(
     '-a',
     type=float,
@@ -52,7 +64,11 @@ try:
         global start_idx
         t = (start_idx + np.arange(frames)) / samplerate
         t = t.reshape(-1, 1)
-        outdata[:] = args.a * np.sin(2 * np.pi * args.frequency * t)
+        if args.m != 250.0 or args.k != 25.0:
+            outdata[:] = np.cos((args.a * np.sin(2 * np.pi * args.frequency * t))+(args.k * np.sin(2 * np.pi * args.m * t)))
+        else:
+            outdata[:] = args.a * np.sin(2 * np.pi * args.frequency * t)
+
         start_idx += frames
 
     with sd.OutputStream(device=args.d, callback=callback, samplerate=samplerate):
