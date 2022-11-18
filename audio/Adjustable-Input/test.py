@@ -5,23 +5,14 @@ import pyaudio
 class Beeper(object):
 
     def __init__(self, **kwargs):
-        self.bitrate = kwargs.pop('bitrate', 16000)
         self.channels = kwargs.pop('channels', 1)
         self._p = pyaudio.PyAudio()
         self.stream = self._p.open(
             format = self._p.get_format_from_width(1), 
             channels = self.channels, 
-            rate = self.bitrate, 
             output = True,
         )
         self._queue = []
-
-    def __enter__(self):
-        return self
-
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        self.stream.stop_stream()
-        self.stream.close()
 
     def tone(self, frequency, length=1000, play=False, **kwargs):
         number_of_frames = int(self.bitrate * length/1000.)
