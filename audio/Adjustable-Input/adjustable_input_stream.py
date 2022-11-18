@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import time
 import pyaudio
 import threading
 import numpy as np
@@ -24,8 +25,7 @@ class WavePlayerLoop(threading.Thread) :
                     channels=1,
                     rate=self.fs,
                     output=True)
-
-    # play. May repeat with different volume values (if done interactively) 
+    
     self.stream.write(self.volume*self.samples)
 
     self.stream.stop_stream()
@@ -33,8 +33,9 @@ class WavePlayerLoop(threading.Thread) :
 
     self.p.terminate()
 
-s = WavePlayerLoop(freq=240., length=10, volume=0.5)
-r = WavePlayerLoop(freq=3000., length=10, volume=0.5)
+s = WavePlayerLoop(freq=240, length=15, volume=0.5)
+r = WavePlayerLoop(freq=3000, length=15, volume=0.5)
 
-s.start()
 r.start()
+time.sleep(3)
+s.start()
