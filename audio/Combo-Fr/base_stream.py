@@ -55,20 +55,30 @@ args = parser.parse_args(remaining)
 
 start_idx = 0
 
-samplerate = sd.query_devices(args.d, 'output')['default_samplerate']
+try:
+    samplerate = sd.query_devices(args.d, 'output')['default_samplerate']
 
-def callback(outdata, frames, time, status):
-    if status:
-        print(status, file=sys.stderr)
-    global start_idx
-    t = (start_idx + np.arange(frames)) / samplerate
-    t = t.reshape(-1, 1)
-    if args.m != 250.0 or args.k != 25.0:
-        outdata[:] = np.cos((args.a * np.sin(2 * np.pi * args.frequency * t))+(args.k * np.sin(2 * np.pi * args.m * t)))
-    else:
-        outdata[:] = args.a * np.sin(2 * np.pi * args.frequency * t)
+    def callback(outdata, frames, time, status):
+        if status:
+            print(status, file=sys.stderr)
+        global start_idx
+        t = (start_idx + np.arange(frames)) / samplerate
+        t = t.reshape(-1, 1)
+        if args.m != 250.0 or args.k != 25.0:
+            outdata[:] = np.cos((args.a * np.sin(2 * np.pi * args.frequency * t))+(args.k * np.sin(2 * np.pi * args.m * t)))
+        else:
+            outdata[:] = args.a * np.sin(2 * np.pi * args.frequency * t)
 
-    start_idx += frames
+        start_idx += frames
 
-with sd.OutputStream(device=args.d, callback=callback, samplerate=samplerate):
-    input()
+    with sd.OutputStream(device=args.d, callback=callback, samplerate=samplerate):
+        print()
+        print('#' * 80)
+        print('\t\t\t\t Return to quit')
+        print('#' * 80)
+        input()
+
+except KeyboardInterrupt:
+    parser.exit('')
+except Exception as e:
+    parser.exit(type(e).__name__ + ': ' + str(e))

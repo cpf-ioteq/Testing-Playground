@@ -5,6 +5,7 @@ import csv
 
 import numpy as np
 import sounddevice as sd
+import matplotlib.pyplot as plt
 
 def frequency_Controller(chz, fmhz, kp, amp):
     # carrier_hz: Frequency of the carrier. BASE - 440.0
@@ -35,6 +36,12 @@ def frequency_Controller(chz, fmhz, kp, amp):
     time.sleep(1)
     sd.stop()
 
+    return waveform_quiet
+
+def plot_data(sample_range, sample_rate):
+    x = sample_range / sample_rate
+    plt.figure(figsize=(15,5))
+    plt.plot(x)
 
 filename = 'wavelength_parser.csv'
 rows = []
@@ -46,3 +53,6 @@ with open(filename, 'r') as csvfile:
         arg1, arg2, arg3, arg4 = rows
         # print(arg1, arg2, arg3)
         frequency_Controller(arg1, arg2, arg3, arg4)
+        x = frequency_Controller(arg1, arg2, arg3, arg4)
+        plot_data(x, 44100)
+
