@@ -21,4 +21,4 @@ def step1(wave_file):
     # # display the plot
     # plt.show()
 
-step1('three.wav')
+step1('long-triple.wav')
