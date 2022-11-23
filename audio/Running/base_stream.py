@@ -55,9 +55,9 @@ args = parser.parse_args(remaining)
 
 start_idx = 0
 
-try:
-    samplerate = sd.query_devices(args.d, 'output')['default_samplerate']
+samplerate = sd.query_devices(args.d, 'output')['default_samplerate']
 
+try:
     def callback(outdata, frames, time, status):
         if status:
             print(status, file=sys.stderr)
@@ -72,13 +72,7 @@ try:
         start_idx += frames
 
     with sd.OutputStream(device=args.d, callback=callback, samplerate=samplerate):
-        print()
-        print('#' * 80)
-        print('\t\t\t\t Return to quit')
-        print('#' * 80)
         input()
-
-except KeyboardInterrupt:
-    parser.exit('')
-except Exception as e:
-    parser.exit(type(e).__name__ + ': ' + str(e))
+    
+except:
+    print()
